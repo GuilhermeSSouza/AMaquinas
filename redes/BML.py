@@ -1,4 +1,3 @@
-import numpy as np
 from random import random
 from math import exp
 
@@ -35,8 +34,8 @@ def propagar_rede(rede, entrada):
 	entrada_propagada = entrada
 	for camada in rede:
 		entrada_nova = []
-		for neuronio in camada:
-			valor = funcao_ativacao(neuronio['pesos'], entrada_propagada)
+		for neuronioio in camada:
+			valor = funcao_ativacao(neuronioio['pesos'], entrada_propagada)
 			n_saida = saida_neuro(valor)
 			entrada_nova.append(n_saida)
 		entrada_propagada = entrada_nova
@@ -45,8 +44,53 @@ def propagar_rede(rede, entrada):
 
 
 
+def transfer_derivative(saida):
+	return saida * (1.0 - saida)
+
+# Metodo que propaga o erra na rede- Erro é propado de tras pra frente na rede
+def propagate_erro(rede, esperado_dados):
+	for i in reversed(range(len(rede))):
+		camada = rede[i]
+		erro_list = list()
+		if i != len(rede)-1:
+			for j in range(len(camada)):
+				error = 0.0
+				for neuronio in rede[i + 1]:
+					error += (neuronio['pesos'][j] * neuronio['Delta'])
+				erro_list.append(error)
+		else:
+			for j in range(len(camada)):
+				neuronio = camada[j]
+				erro_list.append(esperado_dados[j] - neuronio['saida'])
+		for j in range(len(camada)):
+			neuronio = camada[j]
+			neuronio['Delta'] = erro_list[j] * transfer_derivative(neuronio['saida'])
 
 
+#Atualiza pesos
+def update_pesos(rede, dados, fator_att):
+	for i in range(len(rede)):
+		entrada = dados[:-1]
+		if i != 0:
+			entrada = [neuronio['saida'] for neuronio in rede[i - 1]]
+		for neuronio in rede[i]:
+			for j in range(len(entrada)):
+				neuronio['pesos'][j] += fator_att * neuronio['Delta'] * entrada[j]
+			neuronio['pesos'][-1] += fator_att * neuronio['Delta']
+
+
+
+def treina_rede(rede, train, l_rate, n_epoch, n_outputs):
+	for epoch in range(n_epoch):
+		sum_error = 0
+		for row in train:
+			outputs = forward_propagate(rede, row)
+			esperado = [0 for i in range(n_outputs)]
+			esperado[row[-1]] = 1
+			sum_error += sum([(esperado[i]-outputs[i])**2 for i in range(len(esperado))])
+			propagate_erro(rede, esperado)
+			update_pesos(rede, row, l_rate)
+		print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
 
 
 
