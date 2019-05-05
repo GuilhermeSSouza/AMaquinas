@@ -1,3 +1,13 @@
+#--------------------------------------------------------------------------------------------
+#
+# Backpropagation Multi Layer
+#
+# Machine Learning
+# Prof: Marcelo Thielo
+# Autor: Guilherme S. Santos    08/05/19
+# 
+#--------------------------------------------------------------------------------------------
+
 from random import random
 from math import exp
 
@@ -30,16 +40,16 @@ def saida_neuro(valor):
 
 
 #Propagar dados pela rede
-def propagar_rede(rede, entrada):
-	entrada_propagada = entrada
+def propagar_rede(rede, dados):
+	entrada = dados
 	for camada in rede:
-		entrada_nova = []
-		for neuronioio in camada:
-			valor = funcao_ativacao(neuronioio['pesos'], entrada_propagada)
-			n_saida = saida_neuro(valor)
-			entrada_nova.append(n_saida)
-		entrada_propagada = entrada_nova
-	return entrada_propagada
+		new_entrada = []
+		for neuronio in camada:
+			f_ativar = funcao_ativacao(neuronio['weights'], entrada)
+			neuronio['saida'] = saida_neuro(f_ativar)
+			new_entrada.append(neuronio['saida'])
+		entrada = new_entrada
+	return entrada
 
 
 
@@ -55,41 +65,41 @@ def propagate_erro(rede, esperado_dados):
 		if i != len(rede)-1:
 			for j in range(len(camada)):
 				error = 0.0
-				for neuronio in rede[i + 1]:
-					error += (neuronio['pesos'][j] * neuronio['Delta'])
+				for neuronioio in rede[i + 1]:
+					error += (neuronioio['pesos'][j] * neuronioio['Delta'])
 				erro_list.append(error)
 		else:
 			for j in range(len(camada)):
-				neuronio = camada[j]
-				erro_list.append(esperado_dados[j] - neuronio['saida'])
+				neuronioio = camada[j]
+				erro_list.append(esperado_dados[j] - neuronioio['saida'])
 		for j in range(len(camada)):
-			neuronio = camada[j]
-			neuronio['Delta'] = erro_list[j] * transfer_derivative(neuronio['saida'])
+			neuronioio = camada[j]
+			neuronioio['Delta'] = erro_list[j] * transfer_derivative(neuronioio['saida'])
 
 
-#Atualiza pesos
+#Atualiza pesos antes de cada nova interação
 def update_pesos(rede, dados, fator_att):
 	for i in range(len(rede)):
 		entrada = dados[:-1]
 		if i != 0:
-			entrada = [neuronio['saida'] for neuronio in rede[i - 1]]
-		for neuronio in rede[i]:
+			entrada = [neuronioio['saida'] for neuronioio in rede[i - 1]]
+		for neuronioio in rede[i]:
 			for j in range(len(entrada)):
-				neuronio['pesos'][j] += fator_att * neuronio['Delta'] * entrada[j]
-			neuronio['pesos'][-1] += fator_att * neuronio['Delta']
+				neuronioio['pesos'][j] += fator_att * neuronioio['Delta'] * entrada[j]
+			neuronioio['pesos'][-1] += fator_att * neuronioio['Delta']
 
 
-
-def treina_rede(rede, train, l_rate, n_epoch, n_outputs):
+#Treina a rede como dados segundo a quantidade
+def treina_rede(rede, train, l_rate, n_epoch, n_saidas):
 	for epoch in range(n_epoch):
 		sum_error = 0
-		for row in train:
-			outputs = forward_propagate(rede, row)
-			esperado = [0 for i in range(n_outputs)]
-			esperado[row[-1]] = 1
-			sum_error += sum([(esperado[i]-outputs[i])**2 for i in range(len(esperado))])
+		for dados in train:
+			saidas = propagate_erro(rede, dados)
+			esperado = [0 for i in range(n_saidas)]
+			esperado[dados[-1]] = 1
+			sum_error += sum([(esperado[i]-saidas[i])**2 for i in range(len(esperado))])
 			propagate_erro(rede, esperado)
-			update_pesos(rede, row, l_rate)
+			update_pesos(rede, dados, l_rate)
 		print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
 
 
