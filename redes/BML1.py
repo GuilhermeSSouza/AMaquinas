@@ -62,7 +62,7 @@ def propagar_rede(rede, dados):
 
 #Derivada da função saida_neuro
 def funcao_derivada(saida):
-	return saida * (1.0 - saida)
+	return saida *(1.0 - saida)
 
 
 #Derivada da tanh
@@ -96,7 +96,7 @@ def propaga_erro(rede, esperado_dados):
 #CORRIGIDO :   #Esse metodo ainda esta muito manual, para cada tamanho de saida deves se alterar o dados[- x:]. Onde x = tamnaho da saida
 def update_pesos(rede, dados, fator_att):
 	for i in range(len(rede)):
-		entrada = dados
+		entrada = dados[:-4]
 		if i != 0:
 			entrada = [neuronio['saida'] for neuronio in rede[i - 1]]
 		for neuronio in rede[i]:
@@ -108,6 +108,14 @@ def update_pesos(rede, dados, fator_att):
 #Treina a rede como dados segundo a quantidade
 def treina_rede(network, train, l_rate, n_epoch, n_outputs):
 	for epoch in range(n_epoch):
+
+		if(epoch==40000):
+			l_rate = l_rate/5
+		if (epoch==60000):
+			l_rate = l_rate/2
+		if (epoch==70000):
+			l_rate = l_rate/2
+
 		sum_error = 0
 		for row in train:
 			saida = propagar_rede(network, row)
@@ -116,7 +124,7 @@ def treina_rede(network, train, l_rate, n_epoch, n_outputs):
 			sum_error += sum([(esperndo[i]-saida[i])**2 for i in range(len(esperndo))])
 			propaga_erro(network, esperndo)
 			update_pesos(network, row[-n_outputs:], l_rate)
-		print('>Epoch=%d, Erro=%.5f' % (epoch, sum_error))
+		print('>Epoch=%d, Taxa = %.7f, Erro=%.5f' % (epoch, l_rate, sum_error))
 
 
 
@@ -136,21 +144,49 @@ def crianumero(row):
 	return saida
 
 
+dataset_X=[[1,1,0,0,1,0,0,1,0,0,1,0,1,1,1,0,0,0,1],
+[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,1,0],
+[1,1,1,0,0,1,0,1,1,0,0,1,1,1,1,0,0,1,1],
+[1,0,1,1,0,1,1,1,1,0,0,1,0,0,1,0,1,0,0],
+[1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,1,0,1],
+[0,1,1,1,0,0,1,1,0,1,0,1,0,1,0,0,1,1,0],
+[1,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,1,1],
+[1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,0,0],
+[1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,0,0,1],
+[1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,0,0,0,0]]
+
+
+
 #Dataset de treinamento números 1 e 2 em matrix de pixel
-dataset_1=[[0,1,0,1,1,0,0,1,0,0,1,0,1,1,1,0,0,0,1], [1,1,1,0,0,1,0,1,0,1,0,0,1,1,1,0,0,1,0]]
-
+dataset_1=[[1,1,0,0,1,0,0,1,0,0,1,0,1,1,1,0,0,0,1],
+[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,1,0],
+[1,1,1,0,0,1,0,1,1,0,0,1,1,1,1,0,0,1,1],
+[1,0,1,1,0,1,1,1,1,0,0,1,0,0,1,0,1,0,0],
+[1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,1,0,1],
+[0,1,1,1,0,0,1,1,0,1,0,1,0,1,0,0,1,1,0],
+[1,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,1,1],
+[1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,0,0],
+[1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,0,0,1],
+[1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,0,0,0,0]]
 #Dataset de verificação com ruidos
-dataset=[[0,1,0,1,1,0,0,1,0,0,1,0,1,0,1,0,0,0,1], [1,1,1,0,0,1,0,1,0,1,0,0,1,1,1,0,0,1,0]]
-
-
+dataset=[[1,1,0,0,1,0,0,1,0,0,1,0,1,1,1,0,0,0,1],
+[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,1,0],
+[1,1,1,0,0,1,0,1,1,0,0,1,1,1,1,0,0,1,1],
+[1,0,1,1,0,1,1,1,1,0,0,1,0,0,1,0,1,0,0],
+[1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,1,0,1],
+[0,1,1,1,0,0,1,1,0,1,0,1,0,1,0,0,1,1,0],
+[1,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,1,1],
+[1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,0,0],
+[1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,0,0,1],
+[1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,0,0,0,0]]
 
 #Carrega dados e cria a rede para treinamento
 n_saida = len(dataset_1[0][-4:])
 n_entrada = len(dataset_1[0]) - n_saida
-network = inicio_rede(n_entrada,2, n_saida)
+network = inicio_rede(n_entrada,15, n_saida)
 
 #Parametros: (network, dataset, l_rate, epcoh, n_ouputs):  A REDE, o ARQUIVO DE DADOS, a taxa de aprendizado, numero de interações, numero de meuronios da camada de saida
-treina_rede(network, dataset_1, 0.01, 100000, n_saida)
+treina_rede(network, dataset_1, 0.5, 100000, n_saida)
 
 
 print('Treino OK')
