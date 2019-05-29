@@ -36,7 +36,8 @@ class kmeans:
 
 		for i in range(len(data)):
 			n = randint(0, k)
-			k = [n, data[i]]
+			k = ponto(k)
+			k.addpoint(data[i])
 			self.listpoint.append(k)
 		return self.listpoint
 
@@ -44,7 +45,7 @@ class kmeans:
 	def retorna(self, data, label):
 		dados = []
 		for i in data:
-			if i[1] == label:
+			if i.getlabel() == label:
 				dados.append(i)
 
 		return dados
@@ -55,9 +56,9 @@ class kmeans:
 		n = len(dado)
 		centro = []
 		for i in dado:
-
-			mx+= i[0]
-			my+= i[1]
+			t = i.getpoint()
+			mx+= t[0]
+			my+= t[1]
 
 		dado = [k, [mx/n, my/n]]
 		return dado
