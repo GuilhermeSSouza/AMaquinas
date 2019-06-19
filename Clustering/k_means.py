@@ -72,21 +72,22 @@ class kmeans:
 
 
 	def distancia(self, pontaA, pontoB):
-		return = sqrt((pontoA[0]-pontoB[0])**2) + ((pontoA[1]-pontoB[1])**2)
+		return sqrt((pontoA[0]-pontoB[0])**2) + ((pontoA[1]-pontoB[1])**2)
 
-	def calulacentroproximo(self, self.listc, self.listpoint, k):
+	def calulacentroproximo(self, listc, listpoint, k):
 
 		dist= []
-		centros = self.listc
+		centros = listc
 
 		for i in range(k):
-			pontos = retorna(self.listpoint, i)
+			pontos = retorna(listpoint, i)
 
 			for l in pontos:
-				for  r in range(k)
-				 dist.append(distancia(l, centros[r][1]))
-				  i_label = dist.index(dist.min())
-				 if i_label != i:
+				for  r in range(k):
+					dist.append(distancia(l, centros[r][1]))
+					i_label = dist.index(dist.min())
+					if i_label != i:
+						
 				 	
 
 
