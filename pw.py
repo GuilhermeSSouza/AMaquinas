@@ -92,25 +92,7 @@ def roleta(p):
 	return pop_roleta[posicaoEscolhida]
 
 
-#Realiza um torneio escolhendo 3 individuos e selecioando sempre o com (Maior fitness) ou o que melhor minimisa min_function_dis
-def torneio(Pop):
-	par = []
-	for p in range(2):
-		index_1=randint(0,tamPop-1)
-		index_2=randint(0,tamPop-1)
-		index_3=randint(0,tamPop-1)
-		if (min_function_dis(Pop[index_1]) <= min_function_dis(Pop[index_2]) and min_function_dis(Pop[index_1]) <= min_function_dis(Pop[index_3])):
-			par.append(index_1)
-		if (min_function_dis(Pop[index_2]) <= min_function_dis(Pop[index_1]) and min_function_dis(Pop[index_2]) <= min_function_dis(Pop[index_3])):
-			par.append(index_2)
-		if (min_function_dis(Pop[index_3]) <= min_function_dis(Pop[index_1]) and min_function_dis(Pop[index_3]) <= min_function_dis(Pop[index_2])):
-			par.append(index_3)
-	return par[0],par[1]
-
-
-
-
-#Defini  se ocorre ou não mutação
+	#Defini  se ocorre ou não mutação
 def mutacao(a):
 	taxa_muta = randint(0,100)
 	if taxa_muta < 20 :
