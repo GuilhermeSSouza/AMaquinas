@@ -1,1 +1,1 @@
-# AMaquinas
+# Aprendizado de Máquinas Alguns algoritimos
